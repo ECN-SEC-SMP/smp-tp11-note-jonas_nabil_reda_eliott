@@ -35,11 +35,9 @@ public :
     int get_Nbticketsreussis() const;
 
     //Methodes
-    ticket* add_newticket() const;
-    CarteTrain* add_newcarte() const;
+    void add_newticket();
+    void add_newcarte();
     void use_wagons(int nb);
-    void valid_ticket();
-
 
 };
 

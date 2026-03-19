@@ -4,28 +4,55 @@
 
 
 //Constructeur
+
 Joueur :: Joueur(std :: string n)   {
     nom = n;
-
+    nbwagon = 20;
 }
 Joueur :: Joueur(std :: string n, std :: vector<CarteTrain*> m_carte,  std::vector<ticket*> m_ticket)   {
     nom = n;
     Main_carte = m_carte;
     Main_ticket = m_ticket;
 
+
 }
 
 
-    std::string Joueur :: getNom() const  {
-        return nom;
+// Getters
 
-    }
-    int Joueur :: get_nbwagons()const {
+std::string Joueur :: getNom() const  {
+    return nom;
 
-        return nbwagon;
-    }
+}
+int Joueur :: get_nbwagons()const {
 
-    int Joueur :: get_Nbticketsreussis()const  {
+    return nbwagon;
+}
 
-        return nbticketsreussis;
+int Joueur :: get_Nbticketsreussis()const  {
+
+    return nbticketsreussis;
+}
+
+
+//Methodes
+
+
+void Joueur :: add_newticket()  {
+    
+    this->Main_ticket.push_back(new ticket);
+
+}
+
+
+void Joueur :: add_newcarte()   {
+    
+    this->Main_carte.push_back(new CarteTrain());
+}
+
+
+    void Joueur :: use_wagons(int nb) {
+        if (nbwagon) {
+            nbwagon--;
+        }
     }
