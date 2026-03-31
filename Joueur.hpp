@@ -38,6 +38,7 @@ public :
     void add_newticket();
     void add_newcarte();
     void use_wagons(int nb);
+    bool peutPrendreVoie(int longueur, Couleur couleur) const ;
 
 };
 

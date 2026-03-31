@@ -56,3 +56,58 @@ void Joueur :: add_newcarte()   {
             nbwagon--;
         }
     }
+
+
+
+bool Joueur::peutPrendreVoie(int longueur, Couleur couleur) const {
+    if (nbwagon < longueur) return false;
+
+    int nbCouleur = 0;
+    int nbLoco    = 0;
+
+    for (const CarteTrain* c : Main_carte) {
+        if (c->getCarteTrain() == Couleur::Multicolore) {
+            nbLoco++;
+        } else if (c->getCarteTrain() == couleur) {
+            nbCouleur++;
+        }
+    }
+
+    return (nbCouleur + nbLoco) >= longueur;
+}
+
+std::vector<CarteTrain*> Joueur::jouerCartes(int longueur, Couleur couleur) {
+    std::vector<CarteTrain*> defausse;
+
+    if (!peutPrendreVoie(longueur, couleur)) {
+        std::cout << "[ERREUR] " << nom << " ne peut pas prendre cette voie.\n";
+        return defausse; // vide
+    }
+
+    int aPoser = longueur;
+
+    // Passe 1 : on joue les cartes de la bonne couleur en priorité
+    for (auto it = Main_carte.begin(); it != Main_carte.end() && aPoser > 0; ) {
+        if ((*it)->getCarteTrain() == couleur) {
+            defausse.push_back(*it);
+            it = Main_carte.erase(it);
+            aPoser--;
+        } else {
+            ++it;
+        }
+    }
+
+    // Passe 2 : on complète avec des locomotives si nécessaire
+    for (auto it = Main_carte.begin(); it != Main_carte.end() && aPoser > 0; ) {
+        if ((*it)->getCarteTrain()  == Couleur::Multicolore) {
+            defausse.push_back(*it);
+            it = Main_carte.erase(it);
+            aPoser--;
+        } else {
+            ++it;
+        }
+    }
+
+    use_wagons(longueur); // on retire les wagons physiques
+    return defausse;
+}
