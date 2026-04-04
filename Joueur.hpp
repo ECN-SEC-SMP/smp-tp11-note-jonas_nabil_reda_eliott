@@ -1,44 +1,37 @@
-#pragma once 
+#pragma once
 
 #include <string>
 #include <vector>
 #include <iostream>
-#include "locomotive.hpp"
 #include "carteTrain.hpp"
 
-class Joueur    {
+class Joueur {
 
-private :
+private:
+    std::string nom;
+    int nbwagon;
+    int score;
+    int nbticketsreussis;
+    std::vector<CarteTrain*> Main_carte;
 
-std :: string nom;
+public:
+    // Constructeur
+    Joueur(std::string n);
 
-int  nbticketsreussis;
-
-int nbwagon;
-
-std :: vector<CarteTrain*> Main_carte;
-
-std :: vector<ticket*> Main_ticket;
-
-
-
-
-
-public :
-    //Constructeur
-    Joueur(std :: string n);    
-    Joueur(std :: string n, std :: vector<CarteTrain*> m_carte,  std::vector<ticket*> m_ticket);
-
-        // Getters
+    // Getters
     std::string getNom() const;
-    int get_nbwagons() const;
-    int get_Nbticketsreussis() const;
+    int getNbWagons() const;
+    int getScore() const;
+    int getNbTicketsReussis() const;
+    const std::vector<CarteTrain*>& getCartes() const;
 
-    //Methodes
-    void add_newticket();
-    void add_newcarte();
+    // Methodes
+    void addCarte(CarteTrain* carte);
+    void addWagons(int nb);
     void use_wagons(int nb);
-    bool peutPrendreVoie(int longueur, Couleur couleur) const ;
-
+    bool peutPrendreVoie(int longueur, Couleur couleur) const;
+    std::vector<CarteTrain*> jouerCartes(int longueur, Couleur couleur);
+    void incrementerScore(int points);
+    void incrementerTicketsReussis();
+    bool aMoinsDeWagons(int seuil) const;
 };
-
