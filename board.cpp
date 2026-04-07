@@ -1,5 +1,5 @@
 // Board.cpp
-#include "Board.hpp"
+#include "board.hpp"
 #include <fstream>
 #include <sstream>
 #include <iostream>
@@ -7,15 +7,15 @@ using namespace std;
 
 Board::Board() {}
 
-Color stringToColor(const string& c) {
-    if (c == "red") return Color::RED;
-    if (c == "blue") return Color::BLUE;
-    if (c == "green") return Color::GREEN;
-    if (c == "yellow") return Color::YELLOW;
-    if (c == "black") return Color::BLACK;
-    if (c == "white") return Color::WHITE;
-    if (c == "orange") return Color::ORANGE;
-    return Color::ANY;
+Couleur stringToColor(const string& c) {
+    if (c == "red") return Couleur::Rouge;
+    if (c == "blue") return Couleur::Bleu;
+    if (c == "green") return Couleur::Vert;
+    if (c == "yellow") return Couleur::Jaune;
+    if (c == "black") return Couleur::Noir;
+    if (c == "white") return Couleur::Blanc;
+    if (c == "orange") return Couleur::Orange;
+    return Couleur::Multicolore;
 }
 
 void Board::loadRoutesFromCSV(const string& filename) {
@@ -35,8 +35,8 @@ void Board::loadRoutesFromCSV(const string& filename) {
         getline(ss, colorStr, ',');
         getline(ss, lengthStr, ',');
         
-        r.color = stringToColor(colorStr);
-        r.length = stoi(lengthStr);
+        r.couleur = stringToColor(colorStr);
+        r.longueur = stoi(lengthStr);
         r.ownerId = -1;
         routes.push_back(r);
     }
