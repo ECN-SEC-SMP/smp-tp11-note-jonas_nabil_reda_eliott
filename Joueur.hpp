@@ -4,6 +4,7 @@
 #include <vector>
 #include <iostream>
 #include "carteTrain.hpp"
+#include "Models.hpp"
 
 class Joueur {
 
@@ -13,6 +14,7 @@ private:
     int score;
     int nbticketsreussis;
     std::vector<CarteTrain*> Main_carte;
+    std::vector<Ticket> mesTickets;
 
 public:
     // Constructeur
@@ -24,16 +26,8 @@ public:
     int getScore() const;
     int getNbTicketsReussis() const;
     const std::vector<CarteTrain*>& getCartes() const;
+    std::vector<Ticket>& getTickets();
 
-<<<<<<< HEAD
-    //Methodes
-    void add_newticket();
-    void add_newcarte();
-    void use_wagons(int nb);
-
-};
-
-=======
     // Methodes
     void addCarte(CarteTrain* carte);
     void addWagons(int nb);
@@ -43,5 +37,6 @@ public:
     void incrementerScore(int points);
     void incrementerTicketsReussis();
     bool aMoinsDeWagons(int seuil) const;
+    void addTicket(Ticket t);
+
 };
->>>>>>> 87a31db466ccb5142f2c5f7f849db0d537df9a7e

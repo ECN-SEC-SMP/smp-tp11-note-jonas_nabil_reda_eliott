@@ -3,6 +3,8 @@
 #include <fstream>
 #include <sstream>
 #include <iostream>
+#include <cstdlib>   
+#include <ctime>     
 using namespace std;
 
 Board::Board() {}
@@ -69,4 +71,66 @@ bool Board::claimRoute(const string& cityA, const string& cityB, int playerId) {
         }
     }
     return false; 
+}
+
+
+std::vector<Route>& Board::getRoutes() {
+    return routes;
+}
+
+std::vector<Ticket>& Board::getAllTickets() {
+    return allTickets;
+}
+
+void Board::initDeck() {
+    // 10 cartes par couleur
+    std::vector<Couleur> couleurs = {
+        Couleur::Rouge, Couleur::Bleu, Couleur::Vert,
+        Couleur::Jaune, Couleur::Noir, Couleur::Blanc, Couleur::Orange
+    };
+    for (Couleur c : couleurs) {
+        for (int i = 0; i < 10; i++) {
+            deck.push_back(new CarteTrain(c));
+        }
+    }
+    // 12 locomotives
+    for (int i = 0; i < 12; i++) {
+        deck.push_back(new CarteTrain(Couleur::Multicolore));
+    }
+
+    // Mélanger le deck
+    srand(time(nullptr));
+    for (int i = deck.size() - 1; i > 0; i--) {
+        int j = rand() % (i + 1);
+        std::swap(deck[i], deck[j]);
+    }
+}
+
+CarteTrain* Board::piocherCarte() {
+    if (deck.empty()) return nullptr;
+    CarteTrain* carte = deck.back();
+    deck.pop_back();
+    return carte;
+}
+
+
+void Board::initTicketDeck() {
+    // Copie tous les tickets dans le deck
+    ticketDeck = allTickets;
+
+    // Mélanger
+    for (int i = ticketDeck.size() - 1; i > 0; i--) {
+        int j = rand() % (i + 1);
+        std::swap(ticketDeck[i], ticketDeck[j]);
+    }
+}
+
+Ticket Board::piocherTicket() {
+    Ticket t = ticketDeck.back();
+    ticketDeck.pop_back();
+    return t;
+}
+
+bool Board::ticketDeckVide() const {
+    return ticketDeck.empty();
 }
