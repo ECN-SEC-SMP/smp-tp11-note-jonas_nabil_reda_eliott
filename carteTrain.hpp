@@ -1,21 +1,12 @@
-#ifndef CARTETRAIN_HPP
-#define CARTETRAIN_HPP
-#include "couleur.hpp"
+#pragma once
+
+#include "Models.hpp"
 
 class CarteTrain {
-
-    private:
-
+private:
     Couleur couleur;
 
-    public:
-
-    CarteTrain(Couleur couleur);
-
+public:
+    CarteTrain(Couleur c);
     Couleur getCarteTrain() const;
-
 };
-
-
-
-#endif

@@ -1,9 +1,7 @@
 #include "carteTrain.hpp"
 
-CarteTrain::CarteTrain(Couleur couleur){
-    this->couleur = couleur;
-}
+CarteTrain::CarteTrain(Couleur c) : couleur(c) {}
 
-Couleur CarteTrain::getCarteTrain() const{
-    return (this->couleur);
+Couleur CarteTrain::getCarteTrain() const {
+    return couleur;
 }
