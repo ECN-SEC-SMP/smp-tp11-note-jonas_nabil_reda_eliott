@@ -3,7 +3,7 @@
 #include <string>
 
 //couleurs des wagons et des cartes
-enum class Color { RED, BLUE, GREEN, YELLOW, BLACK, WHITE, ORANGE, LOCOMOTIVE, ANY };
+enum class Couleur { Rouge, Bleu, Vert, Jaune, Noir, Blanc, Orange, Multicolore };
 
 // Structure représentant un Ticket
 struct Ticket {
@@ -17,7 +17,7 @@ struct Ticket {
 struct Route {
     std::string cityA;
     std::string cityB;
-    Color color;
-    int length;
+    Couleur couleur;
+    int longueur;
     int ownerId = -1; // -1 = libre, sinon ID du joueur
 };
