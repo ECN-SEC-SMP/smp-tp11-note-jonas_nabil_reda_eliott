@@ -1,106 +1,109 @@
 #include "Joueur.hpp"
+#include <map>
+#include <iostream>
 
-// Constructeur
-Joueur::Joueur(std::string n) : nom(n), nbwagon(20), score(0), nbticketsreussis(0) {
-}
+Joueur::Joueur(int id, const std::string& n, const std::string& couleur)
+    : id(id), nom(n), couleurWagon(couleur), nbwagon(20), aGrandeTraversee(false) {}
 
-// Getters
-std::string Joueur::getNom() const {
-    return nom;
-}
+int         Joueur::getId()           const { return id; }
+std::string Joueur::getNom()          const { return nom; }
+std::string Joueur::getCouleurWagon() const { return couleurWagon; }
+int         Joueur::getNbWagons()     const { return nbwagon; }
+bool        Joueur::hasGrandeTraversee() const { return aGrandeTraversee; }
 
-int Joueur::getNbWagons() const {
-    return nbwagon;
-}
-
-int Joueur::getScore() const {
-    return score;
-}
-
+// +1 si on a la grande traversée
 int Joueur::getNbTicketsReussis() const {
-    return nbticketsreussis;
+    return (int)ticketsReussis.size() + (aGrandeTraversee ? 1 : 0);
 }
 
-const std::vector<CarteTrain*>& Joueur::getCartes() const {
-    return Main_carte;
-}
+const std::vector<CarteTrain*>& Joueur::getCartes()         const { return mainCartes; }
+const std::vector<Ticket>&      Joueur::getTicketsEnMain()  const { return ticketsEnMain; }
+const std::vector<Ticket>&      Joueur::getTicketsReussis() const { return ticketsReussis; }
 
-// Methodes
-void Joueur::addCarte(CarteTrain* carte) {
-    Main_carte.push_back(carte);
-}
-
-void Joueur::addWagons(int nb) {
-    nbwagon += nb;
-}
+void Joueur::addCarte(CarteTrain* c) { mainCartes.push_back(c); }
 
 void Joueur::use_wagons(int nb) {
-    if (nbwagon >= nb) {
-        nbwagon -= nb;
-    }
+    if (nbwagon >= nb) nbwagon -= nb;
 }
 
 bool Joueur::peutPrendreVoie(int longueur, Couleur couleur) const {
     if (nbwagon < longueur) return false;
-
-    int nbCouleur = 0;
-    int nbLoco = 0;
-
-    for (const CarteTrain* c : Main_carte) {
-        if (c->getCarteTrain() == Couleur::Multicolore) {
-            nbLoco++;
-        } else if (c->getCarteTrain() == couleur) {
-            nbCouleur++;
-        }
+    int nb = 0, loco = 0;
+    for (auto* c : mainCartes) {
+        if (c->getCarteTrain() == Couleur::Multicolore) loco++;
+        else if (c->getCarteTrain() == couleur) nb++;
     }
-
-    return (nbCouleur + nbLoco) >= longueur;
+    return (nb + loco) >= longueur;
 }
 
 std::vector<CarteTrain*> Joueur::jouerCartes(int longueur, Couleur couleur) {
     std::vector<CarteTrain*> defausse;
-
-    if (!peutPrendreVoie(longueur, couleur)) {
-        std::cout << "[ERREUR] " << nom << " ne peut pas prendre cette voie.\n";
-        return defausse;
-    }
-
+    if (!peutPrendreVoie(longueur, couleur)) return defausse;
     int aPoser = longueur;
-
-    // Passe 1 : on joue les cartes de la bonne couleur en priorite
-    for (auto it = Main_carte.begin(); it != Main_carte.end() && aPoser > 0; ) {
+    // d'abord les cartes de la bonne couleur
+    for (auto it = mainCartes.begin(); it != mainCartes.end() && aPoser > 0; ) {
         if ((*it)->getCarteTrain() == couleur) {
             defausse.push_back(*it);
-            it = Main_carte.erase(it);
+            it = mainCartes.erase(it);
             aPoser--;
-        } else {
-            ++it;
-        }
+        } else ++it;
     }
-
-    // Passe 2 : on complete avec des locomotives si necessaire
-    for (auto it = Main_carte.begin(); it != Main_carte.end() && aPoser > 0; ) {
+    // puis les locos si besoin
+    for (auto it = mainCartes.begin(); it != mainCartes.end() && aPoser > 0; ) {
         if ((*it)->getCarteTrain() == Couleur::Multicolore) {
             defausse.push_back(*it);
-            it = Main_carte.erase(it);
+            it = mainCartes.erase(it);
             aPoser--;
-        } else {
-            ++it;
-        }
+        } else ++it;
     }
-
     use_wagons(longueur);
     return defausse;
 }
 
-void Joueur::incrementerScore(int points) {
-    score += points;
+void Joueur::ajouterTicket(const Ticket& t) { ticketsEnMain.push_back(t); }
+
+bool Joueur::completerTicket(int ticketId) {
+    for (auto it = ticketsEnMain.begin(); it != ticketsEnMain.end(); ++it) {
+        if (it->id == ticketId) {
+            it->isCompleted = true;
+            ticketsReussis.push_back(*it);
+            ticketsEnMain.erase(it);
+            return true;
+        }
+    }
+    return false;
 }
 
-void Joueur::incrementerTicketsReussis() {
-    nbticketsreussis++;
+std::vector<Ticket> Joueur::defausserTousTickets() {
+    std::vector<Ticket> tmp = ticketsEnMain;
+    ticketsEnMain.clear();
+    return tmp;
 }
 
-bool Joueur::aMoinsDeWagons(int seuil) const {
-    return nbwagon <= seuil;
+void Joueur::setGrandeTraversee(bool val) { aGrandeTraversee = val; }
+
+bool Joueur::aMoinsDeWagons(int seuil) const { return nbwagon <= seuil; }
+
+void Joueur::afficherEtat() const {
+    std::cout << "=== " << nom << " [" << couleurWagon << "] ===\n";
+    std::cout << "  Wagons: " << nbwagon << "/20 | Tickets reussis: " << getNbTicketsReussis() << "\n";
+    // compter les cartes par couleur
+    std::map<Couleur, int> compte;
+    for (auto* c : mainCartes) compte[c->getCarteTrain()]++;
+    std::cout << "  Main: ";
+    for (auto& [col, cnt] : compte)
+        std::cout << couleurToString(col) << "x" << cnt << " ";
+    std::cout << "\n";
+    if (!ticketsEnMain.empty()) {
+        std::cout << "  Tickets en cours:\n";
+        for (auto& t : ticketsEnMain)
+            std::cout << "    [ ] " << t.cityA << " <-> " << t.cityB << "\n";
+    }
+    if (!ticketsReussis.empty()) {
+        std::cout << "  Tickets reussis:\n";
+        for (auto& t : ticketsReussis)
+            std::cout << "    [OK] " << t.cityA << " <-> " << t.cityB << "\n";
+    }
+    if (aGrandeTraversee)
+        std::cout << "  [BONUS] Grande Traversee!\n";
 }
