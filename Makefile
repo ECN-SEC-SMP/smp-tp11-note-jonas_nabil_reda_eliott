@@ -1,7 +1,7 @@
 CXX = g++
 CXXFLAGS = -std=c++17 -Wall -Wextra
 TARGET = jeu
-SRCS = main.cpp Joueur.cpp board.cpp carteTrain.cpp
+SRCS = main.cpp Joueur.cpp board.cpp carteTrain.cpp Jeu.cpp
 OBJS = $(SRCS:.cpp=.o)
 
 all: $(TARGET)
